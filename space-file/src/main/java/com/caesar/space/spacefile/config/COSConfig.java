@@ -15,4 +15,17 @@ public class COSConfig {
     private String bucketName;
     private String folderPrefix;
     private String cosHost;
+
+    @Override
+    public String toString() {
+        return "COSConfig{" +
+                "baseUrl='" + baseUrl + '\'' +
+                ", accessKey='" + accessKey + '\'' +
+                ", secretKey='" + secretKey + '\'' +
+                ", regionName='" + regionName + '\'' +
+                ", bucketName='" + bucketName + '\'' +
+                ", folderPrefix='" + folderPrefix + '\'' +
+                ", cosHost='" + cosHost + '\'' +
+                '}';
+    }
 }

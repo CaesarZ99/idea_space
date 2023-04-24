@@ -1,0 +1,11 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: space-main # 服务名称
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        refresh-enabled: true
+        server-addr: 139.9.240.113:8848

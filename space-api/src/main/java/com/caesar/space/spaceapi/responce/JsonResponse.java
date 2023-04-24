@@ -1,6 +1,4 @@
 package com.caesar.space.spaceapi.responce;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,37 +21,37 @@ public class JsonResponse<T>{
     public static final String DEFAULT_NO_DATA_MESSAGE = "no data";
 
     private Integer code;
-    private T message;
+    private T data;
 
-    public JsonResponse(Integer code, T message) {
+    public JsonResponse(Integer code, T data) {
         this.code = code;
-        this.message = message;
+        this.data = data;
     }
 
     public static class Builder {
         public static JsonResponse<?> buildSuccess(){
             return new JsonResponse<>(SUCCESS_CODE, DEFAULT_SUCCESS_MESSAGE);
         }
-        public static JsonResponse<?> buildSuccess(Object message){
-            return new JsonResponse<>(SUCCESS_CODE, message);
+        public static JsonResponse<?> buildSuccess(Object data){
+            return new JsonResponse<>(SUCCESS_CODE, data);
         }
 
         public static JsonResponse<?> buildFailure(){
             return new JsonResponse<>(FAILURE_CODE, DEFAULT_FAILURE_MESSAGE);
         }
-        public static JsonResponse<?> buildFailure(Object message){
-            return new JsonResponse<>(FAILURE_CODE, message);
+        public static JsonResponse<?> buildFailure(Object data){
+            return new JsonResponse<>(FAILURE_CODE, data);
         }
-        public static JsonResponse<?> buildNoData(Object message){
-            return new JsonResponse<>(NO_DATA_CODE, message);
+        public static JsonResponse<?> buildNoData(Object data){
+            return new JsonResponse<>(NO_DATA_CODE, data);
         }
         public static JsonResponse<?> buildNoData(){
             return new JsonResponse<>(NO_DATA_CODE, DEFAULT_NO_DATA_MESSAGE);
         }
-    }
 
-    public JsonResponse<?> build(Integer code, T message) {
-        return new JsonResponse<>(code,message);
+        public static JsonResponse<?> build(Integer code, Object data) {
+            return new JsonResponse<>(code,data);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.caesar.space.spacefile.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.caesar.space.spaceapi.exception.ServiceException;
 import com.caesar.space.spaceapi.responce.JsonResponse;
 import com.caesar.space.spaceapi.tools.IpUtil;
 import com.caesar.space.spaceapi.tools.RedisUtil;
@@ -57,10 +58,10 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
         if (limits != null) {
             return limits;
         }
-        return JsonResponse.Builder.buildSuccess(uploadFile(multipartFile));
+        return uploadFile(multipartFile);
     }
 
-    public String uploadFile(MultipartFile multipartFile){
+    public JsonResponse<?> uploadFile(MultipartFile multipartFile){
         // spring直接使用File接收文件传参，会有问题(No primary or single unique constructor found for class java.io.File)不知道具体原因，之后再看。
         // 腾讯云上传方法参数需要File,做一个转换操作
         File file;
@@ -74,11 +75,11 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
             cosClient.putObject(putObjectRequest);
         } catch (Exception e) {
             e.printStackTrace();
-            return "上传文件异常";
+            return JsonResponse.Builder.buildFailure("上传文件异常: " + e.getMessage());
         }
 
         //ResponseParam为自定义返回json格式
-        return cosConfig.getCosHost() + "/" + key;
+        return JsonResponse.Builder.buildSuccess(cosConfig.getCosHost() + "/" + key);
     }
     /**
      * 接口只能接受MultipartFile, 腾讯云需要File

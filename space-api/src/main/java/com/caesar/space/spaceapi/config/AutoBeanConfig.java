@@ -10,8 +10,8 @@ import org.springframework.web.client.RestTemplate;
  * <h3>AutoBeanConfig</h3>
  * <p>加载一些主要的bean</p>
  *
- * @author : Caesar·Liu
- * @date : 2023-04-23 13:34
+ * @author Caesar·Liu
+ * @date 2023-04-23 13:34
  **/
 @Configuration
 public class AutoBeanConfig {

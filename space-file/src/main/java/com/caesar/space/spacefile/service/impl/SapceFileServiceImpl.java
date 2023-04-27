@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caesar.space.spaceapi.annotations.OperationLog;
 import com.caesar.space.spaceapi.exception.ServiceException;
 import com.caesar.space.spaceapi.responce.JsonResponse;
+import com.caesar.space.spaceapi.util.IpUtil;
 import com.caesar.space.spaceapi.util.RedisUtil;
 import com.caesar.space.spaceapi.util.TimeUtil;
 import com.caesar.space.spacefile.config.COSConfig;
@@ -48,12 +49,17 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
     @OperationLog(code = "uploadFile", value = "上传头像")
     @Override
     public String uploadFileLimit(MultipartFile multipartFile, int limit) {
-        test();
-        throw new ServiceException("测试异常aop");
+        String ipaddr = IpUtil.getIpAddr(request);
+        int uploadTimesInDay = redisUtil.get(ipaddr);
+        String limits = fileLimits(limit, ipaddr, uploadTimesInDay);
+        if (limits != null) {
+            return limits;
+        }
+        return uploadFile(multipartFile);
     }
 
     @OperationLog(code = "uploadFile", value = "上传文件")
-    public JsonResponse<?> uploadFile(MultipartFile multipartFile){
+    public String uploadFile(MultipartFile multipartFile){
         // spring直接使用File接收文件传参，会有问题(No primary or single unique constructor found for class java.io.File)不知道具体原因，之后再看。
         // 腾讯云上传方法参数需要File,做一个转换操作
         File file;
@@ -67,11 +73,11 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
             cosClient.putObject(putObjectRequest);
         } catch (Exception e) {
             e.printStackTrace();
-            return JsonResponse.Builder.buildFailure("上传文件异常: " + e.getMessage());
+            return "上传文件异常: " + e.getMessage();
         }
 
         //ResponseParam为自定义返回json格式
-        return JsonResponse.Builder.buildSuccess(cosConfig.getCosHost() + "/" + key);
+        return cosConfig.getCosHost() + "/" + key;
     }
     /**
      * 接口只能接受MultipartFile, 腾讯云需要File
@@ -96,10 +102,10 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
     }
 
 
-    private JsonResponse<?> fileLimits(int limit, String ipaddr, int uploadTimesInDay) {
+    private String fileLimits(int limit, String ipaddr, int uploadTimesInDay) {
         if (uploadTimesInDay >= limit) {
-            return JsonResponse.Builder.buildFailure("您今日上传以超过次数限制: " + limit + "次~ 请在 "
-                    + TimeUtil.formatDateTime(redisUtil.getExpire(ipaddr)) + " 后重试");
+            return "您今日上传以超过次数限制: " + limit + "次~ 请在 "
+                    + TimeUtil.formatDateTime(redisUtil.getExpire(ipaddr)) + " 后重试";
         }
         if (uploadTimesInDay == 0) {
             redisUtil.set(ipaddr);
@@ -107,11 +113,6 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
             redisUtil.increment(ipaddr);
         }
         return null;
-    }
-
-    @OperationLog
-    public void test(){
-        System.out.println("test");
     }
 }
 

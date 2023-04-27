@@ -38,7 +38,7 @@ public class SpaceFileController {
     @PostMapping(value = "upload")
     public String upload(@RequestPart("file") MultipartFile multipartFile) {
         if (ObjectUtils.isEmpty(multipartFile)) {
-            return "multipartFile if required";
+            return "multipartFile is required";
         }
         return ideaFileService.uploadFileLimit(multipartFile, 10);
     }

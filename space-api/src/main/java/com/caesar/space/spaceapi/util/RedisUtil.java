@@ -1,4 +1,4 @@
-package com.caesar.space.spaceapi.tools;
+package com.caesar.space.spaceapi.util;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;

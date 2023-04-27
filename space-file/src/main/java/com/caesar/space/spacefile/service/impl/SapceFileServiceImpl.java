@@ -1,23 +1,18 @@
 package com.caesar.space.spacefile.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.caesar.space.spaceapi.annotations.OperationLog;
 import com.caesar.space.spaceapi.exception.ServiceException;
 import com.caesar.space.spaceapi.responce.JsonResponse;
-import com.caesar.space.spaceapi.tools.IpUtil;
-import com.caesar.space.spaceapi.tools.RedisUtil;
-import com.caesar.space.spaceapi.tools.TimeUtil;
+import com.caesar.space.spaceapi.util.RedisUtil;
+import com.caesar.space.spaceapi.util.TimeUtil;
 import com.caesar.space.spacefile.config.COSConfig;
 import com.caesar.space.spacefile.domain.SpaceFile;
 import com.caesar.space.spacefile.mapper.IdeaFileMapper;
 import com.caesar.space.spacefile.service.SpaceFileService;
 
 import com.qcloud.cos.COSClient;
-import com.qcloud.cos.ClientConfig;
-import com.qcloud.cos.auth.BasicCOSCredentials;
-import com.qcloud.cos.auth.COSCredentials;
-import com.qcloud.cos.http.HttpProtocol;
 import com.qcloud.cos.model.PutObjectRequest;
-import com.qcloud.cos.region.Region;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,17 +45,14 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
     COSClient cosClient;
 
 
+    @OperationLog(code = "uploadFile", value = "上传头像")
     @Override
-    public JsonResponse<?> uploadFileLimit(MultipartFile multipartFile, int limit) {
-        String ipaddr = IpUtil.getIpAddr(request);
-        int uploadTimesInDay = redisUtil.get(ipaddr);
-        JsonResponse<?> limits = fileLimits(limit, ipaddr, uploadTimesInDay);
-        if (limits != null) {
-            return limits;
-        }
-        return uploadFile(multipartFile);
+    public String uploadFileLimit(MultipartFile multipartFile, int limit) {
+        test();
+        throw new ServiceException("测试异常aop");
     }
 
+    @OperationLog(code = "uploadFile", value = "上传文件")
     public JsonResponse<?> uploadFile(MultipartFile multipartFile){
         // spring直接使用File接收文件传参，会有问题(No primary or single unique constructor found for class java.io.File)不知道具体原因，之后再看。
         // 腾讯云上传方法参数需要File,做一个转换操作
@@ -117,6 +109,10 @@ public class SapceFileServiceImpl extends ServiceImpl<IdeaFileMapper, SpaceFile>
         return null;
     }
 
+    @OperationLog
+    public void test(){
+        System.out.println("test");
+    }
 }
 
 

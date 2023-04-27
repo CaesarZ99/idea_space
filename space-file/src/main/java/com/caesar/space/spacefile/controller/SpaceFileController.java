@@ -1,13 +1,12 @@
 package com.caesar.space.spacefile.controller;
 
 import com.caesar.space.spaceapi.responce.JsonResponse;
-import com.caesar.space.spaceapi.tools.RedisUtil;
+import com.caesar.space.spaceapi.util.RedisUtil;
 import com.caesar.space.spacefile.service.SpaceFileService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,7 +36,10 @@ public class SpaceFileController {
     String string ;
 
     @PostMapping(value = "upload")
-    public JsonResponse<?> upload(@RequestPart("file") MultipartFile multipartFile) {
+    public String upload(@RequestPart("file") MultipartFile multipartFile) {
+        if (ObjectUtils.isEmpty(multipartFile)) {
+            return "multipartFile if required";
+        }
         return ideaFileService.uploadFileLimit(multipartFile, 10);
     }
 

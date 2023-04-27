@@ -1,5 +1,6 @@
 package com.caesar.space.spaceapi.responce;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
  * @date : 2023-04-23 16:37
  **/
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class JsonResponse<T> {
 
@@ -22,6 +24,9 @@ public class JsonResponse<T> {
     public static final String DEFAULT_NO_DATA_MESSAGE = "no data";
 
     private Integer code;
+
+    private String message;
+
     private T data;
 
     public JsonResponse(Integer code, T data) {
@@ -38,6 +43,14 @@ public class JsonResponse<T> {
             return new JsonResponse<>(SUCCESS_CODE, data);
         }
 
+        public static JsonResponse<?> buildSuccess(String message) {
+            return new JsonResponse<>(SUCCESS_CODE, message);
+        }
+
+        public static JsonResponse<?> buildSuccess(String message, Object data) {
+            return new JsonResponse<>(SUCCESS_CODE, message, data);
+        }
+
         public static JsonResponse<?> buildFailure() {
             return new JsonResponse<>(FAILURE_CODE, DEFAULT_FAILURE_MESSAGE);
         }
@@ -46,16 +59,20 @@ public class JsonResponse<T> {
             return new JsonResponse<>(FAILURE_CODE, data);
         }
 
+        public static JsonResponse<?> buildFailure(String message) {
+            return new JsonResponse<>(FAILURE_CODE, message);
+        }
+
+        public static JsonResponse<?> buildFailure(String message, Object data) {
+            return new JsonResponse<>(FAILURE_CODE, message, data);
+        }
+
         public static JsonResponse<?> buildNoData(Object data) {
             return new JsonResponse<>(NO_DATA_CODE, data);
         }
 
         public static JsonResponse<?> buildNoData() {
             return new JsonResponse<>(NO_DATA_CODE, DEFAULT_NO_DATA_MESSAGE);
-        }
-
-        public static JsonResponse<?> build(Integer code, Object data) {
-            return new JsonResponse<>(code, data);
         }
     }
 

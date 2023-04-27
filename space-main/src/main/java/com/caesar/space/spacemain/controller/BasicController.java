@@ -17,14 +17,14 @@
 package com.caesar.space.spacemain.controller;
 
 
-import com.caesar.space.spaceapi.tools.MqUtil;
+import com.caesar.space.spaceapi.responce.JsonResponse;
+import com.caesar.space.spaceapi.util.MqUtil;
+import com.caesar.space.spacemain.service.BasicUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
 
 /**
  * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
@@ -34,19 +34,14 @@ import java.io.File;
 public class BasicController {
 
     @Autowired
-    private MqUtil mqUtil;
+    private BasicUserService basicUserService;
 
-    @RequestMapping("/hello")
-    public String hello() {
-
-        return mqUtil.sendUploadMessage(null);
-    }
     @RequestMapping(value = "upload")
-    public String upload(@RequestPart("file") MultipartFile multipartFile) {
+    public JsonResponse<?> upload(@RequestPart("file") MultipartFile multipartFile) {
         if (multipartFile == null) {
-            return "file is required";
+            return JsonResponse.Builder.buildFailure("file is required");
         }
-        return mqUtil.sendUploadMessage(multipartFile);
+        return JsonResponse.Builder.buildSuccess(basicUserService.uploadFileBySpaceFile(multipartFile));
     }
 
 }

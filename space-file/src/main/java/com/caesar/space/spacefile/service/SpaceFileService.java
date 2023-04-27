@@ -12,5 +12,5 @@ import org.springframework.web.multipart.MultipartFile;
 */
 public interface SpaceFileService extends IService<SpaceFile> {
 
-    JsonResponse<?> uploadFileLimit(MultipartFile multipartFile, int limit);
+    String uploadFileLimit(MultipartFile multipartFile, int limit);
 }

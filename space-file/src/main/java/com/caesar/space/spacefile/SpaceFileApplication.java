@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication(scanBasePackages = {"com.caesar.space.spacefile","com.caesar.space.spaceapi"})
 @MapperScan("com.caesar.space.spacefile.mapper")
+@EnableAspectJAutoProxy
 public class SpaceFileApplication {
 
     public static void main(String[] args) {
@@ -23,11 +25,12 @@ public class SpaceFileApplication {
 
     @Autowired
     COSConfig cosConfig;
-    @Bean
+
     /**
      * 获取腾讯云COS客户端
      * @return COSClient
      */
+    @Bean
     public COSClient initCosClient() {
         COSCredentials cred = new BasicCOSCredentials(cosConfig.getAccessKey(), cosConfig.getSecretKey());
         Region region = new Region(cosConfig.getRegionName());

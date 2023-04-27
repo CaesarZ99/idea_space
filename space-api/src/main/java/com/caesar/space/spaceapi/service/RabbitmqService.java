@@ -1,5 +1,11 @@
 package com.caesar.space.spaceapi.service;
 
 public interface RabbitmqService {
-    void mqUploadFileMessage(String routingKey, Object message);
+    /**
+     * 消息异步通知发送注册邮箱验证码
+     *
+     * @param routingKey routingKey
+     * @param message message
+     */
+    void sendSignUpMailCode(String routingKey, Object message);
 }

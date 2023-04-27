@@ -20,6 +20,8 @@ package com.caesar.space.spacemain.controller;
 import com.caesar.space.spaceapi.responce.JsonResponse;
 import com.caesar.space.spaceapi.util.MqUtil;
 import com.caesar.space.spacemain.service.BasicUserService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.ribbon.proxy.annotation.Hystrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,11 +39,24 @@ public class BasicController {
     private BasicUserService basicUserService;
 
     @RequestMapping(value = "upload")
+    @HystrixCommand(fallbackMethod = "uploadFail")
     public JsonResponse<?> upload(@RequestPart("file") MultipartFile multipartFile) {
         if (multipartFile == null) {
             return JsonResponse.Builder.buildFailure("file is required");
         }
         return JsonResponse.Builder.buildSuccess(basicUserService.uploadFileBySpaceFile(multipartFile));
     }
+
+    /**
+     * 上传文件basic/upload的熔断接口
+     * 熔断参数和返回值都需要一样
+     *
+     * @param multipartFile multipartFile
+     * @return JsonResponse
+     */
+    public JsonResponse<?> uploadFail(MultipartFile multipartFile) {
+        return JsonResponse.Builder.buildFailure("上传失败咯");
+    }
+
 
 }

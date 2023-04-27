@@ -20,7 +20,7 @@ public class RabbitmqServiceImpl implements RabbitmqService {
     private RabbitTemplate rabbitTemplate;
 
     @Override
-    public void mqUploadFileMessage(String routingKey, Object message) {
+    public void sendSignUpMailCode(String routingKey, Object message) {
         rabbitTemplate.convertAndSend(RabbitmqConstant.EXCHANGE_BOOT.getCode(), routingKey, message);
     }
 

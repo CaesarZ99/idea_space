@@ -34,10 +34,9 @@ public class MqUtil {
 
     public static final String UPLOAD_ROUTE_KEY = "boot.haha.hhh";
 
-    public void sendUploadMessage(MultipartFile multipartFile) {
-        HashMap<String, String> messageMap = new HashMap<>();
-        messageMap.put("code","1001");
-        messageMap.put("fileId","upload");
-        rabbitmqService.mqUploadFileMessage(UPLOAD_ROUTE_KEY,messageMap);
+    public void sendSignUpMailCode(MultipartFile multipartFile) {
+        MultiValueMap<String, Object> messageMap = new LinkedMultiValueMap<>();
+        messageMap.add("file",multipartFile.getResource());
+        rabbitmqService.sendSignUpMailCode(UPLOAD_ROUTE_KEY,messageMap);
     }
 }

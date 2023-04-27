@@ -69,6 +69,6 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
 
     @Override
     public void uploadFileByMq(MultipartFile file) {
-        mqUtil.sendUploadMessage(file);
+        mqUtil.sendSignUpMailCode(file);
     }
 }

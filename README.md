@@ -100,5 +100,6 @@
         active: dev # nacos配置文件匹配规则:${spring.application.name}-${spring.profiles.active}.${file-extension}
     ```
 - 问题5
-  - 
+  - docker部署后端无法连接华为云服务器nacos
+  - 解决措施：docker中部署nacos需要放开9848和9849端口
 

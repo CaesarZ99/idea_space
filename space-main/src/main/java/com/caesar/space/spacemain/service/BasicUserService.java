@@ -1,6 +1,6 @@
 package com.caesar.space.spacemain.service;
 
-import com.caesar.space.spacemain.domain.User;
+import com.caesar.space.spaceapi.domain.User;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface BasicUserService {

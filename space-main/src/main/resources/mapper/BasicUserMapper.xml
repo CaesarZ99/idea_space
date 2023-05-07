@@ -4,10 +4,41 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.caesar.space.spacemain.mapper.BasicUserMapper">
 
-    <resultMap id="BaseResultMap" type="com.caesar.space.spacemain.domain.User">
-            <id property="userId" column="user_id" jdbcType="BIGINT"/>
+    <sql id="Base_Column_List">
+        iut
+        .
+        user_id
+        , iut.user_name, iut.password, iut.nick_name, iut.invalid_flag, iut.delete_flag, iut.created_time, iut.updated_time
+    </sql>
+    <resultMap id="BaseResultMap" type="com.caesar.space.spaceapi.domain.User">
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <id property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <id property="password" column="password" jdbcType="VARCHAR"/>
+        <id property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <id property="invalidFlag" column="invalid_flag" jdbcType="INTEGER"/>
+        <id property="deleteFlag" column="delete_flag" jdbcType="INTEGER"/>
+        <id property="createdTime" column="created_time" jdbcType="VARCHAR"/>
+        <id property="updatedTime" column="updated_time" jdbcType="VARCHAR"/>
+        <association property="avatarFile" javaType="com.caesar.space.spaceapi.domain.SpaceFile">
+            <id property="fileId" column="file_id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="isLatest" column="is_latest" jdbcType="INTEGER"/>
+            <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
             <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
             <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+        </association>
     </resultMap>
+
+    <select id="selectUserById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>, ift.file_id, ift.url, ift.type, ift.is_latest, ift.business_type,
+        ift.created_time, ift.updated_time
+        from idea_user_t iut left join idea_file_t ift
+        on iut.user_id = ift.user_id
+        where iut.user_id = #{userId} and iut.delete_flag = 0 and iut.invalid_flag = 1
+        and ift.is_latest = 1
+    </select>
 
 </mapper>

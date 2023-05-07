@@ -1,7 +1,9 @@
 package com.caesar.space.spacefile.controller;
 
 import com.caesar.space.spaceapi.responce.JsonResponse;
+import com.caesar.space.spaceapi.util.IpUtil;
 import com.caesar.space.spaceapi.util.RedisUtil;
+import com.caesar.space.spaceapi.util.TimeUtil;
 import com.caesar.space.spacefile.service.SpaceFileService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 /**
@@ -36,11 +39,16 @@ public class SpaceFileController {
     String string ;
 
     @PostMapping(value = "upload")
-    public String upload(@RequestPart("file") MultipartFile multipartFile) {
+    public JsonResponse<?> upload(@RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
         if (ObjectUtils.isEmpty(multipartFile)) {
-            return "multipartFile is required";
+            return JsonResponse.Builder.buildFailure("multipartFile is required");
         }
-        return ideaFileService.uploadFileLimit(multipartFile, 10);
+        Object uploadFileLimit = ideaFileService.uploadFileLimit(multipartFile, 10 ,request);
+        if ("FAILED".equals(uploadFileLimit)) {
+            return JsonResponse.Builder.buildFailure("您今日上传以超过次数限制: " + 10 + "次~ 请在 "
+                    + TimeUtil.formatDateTime(redisUtil.getExpire(IpUtil.getIpAddr(request))) + " 后重试");
+        }
+        return JsonResponse.Builder.buildSuccess(uploadFileLimit);
     }
 
     @PostMapping(value = "/cosUpload")

@@ -3,6 +3,7 @@ package com.caesar.space.spaceapi.responce;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * <h3>JsonResponce</h3>
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class JsonResponse<T> {
 
     public static final Integer SUCCESS_CODE = 1;
@@ -34,13 +36,18 @@ public class JsonResponse<T> {
         this.data = data;
     }
 
+    public JsonResponse(Integer code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
     public static class Builder {
         public static JsonResponse<?> buildSuccess() {
             return new JsonResponse<>(SUCCESS_CODE, DEFAULT_SUCCESS_MESSAGE);
         }
 
         public static JsonResponse<?> buildSuccess(Object data) {
-            return new JsonResponse<>(SUCCESS_CODE, data);
+            return new JsonResponse<>(SUCCESS_CODE, DEFAULT_SUCCESS_MESSAGE, data);
         }
 
         public static JsonResponse<?> buildSuccess(String message) {
@@ -56,7 +63,7 @@ public class JsonResponse<T> {
         }
 
         public static JsonResponse<?> buildFailure(Object data) {
-            return new JsonResponse<>(FAILURE_CODE, data);
+            return new JsonResponse<>(FAILURE_CODE, DEFAULT_FAILURE_MESSAGE, data);
         }
 
         public static JsonResponse<?> buildFailure(String message) {

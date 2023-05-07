@@ -1,11 +1,14 @@
-package com.caesar.space.spacefile.domain;
+package com.caesar.space.spaceapi.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -13,6 +16,8 @@ import lombok.Data;
  */
 @TableName(value ="idea_file_t")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SpaceFile implements Serializable {
     /**
      * 文件ID
@@ -34,6 +39,11 @@ public class SpaceFile implements Serializable {
      * 文件类型
      */
     private String type;
+
+    /**
+     * 文件类型
+     */
+    private Integer isLatest;
 
     /**
      * 业务类型

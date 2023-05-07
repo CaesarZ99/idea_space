@@ -34,15 +34,11 @@ public class OperationLogAspect {
     @Around("addOperationLog()")
     public Object saveOperationLog(ProceedingJoinPoint joinPoint){
         OperationLog annotation = getAnnotation(joinPoint);
+        Object proceed = null;
         try {
             // 如果调用joinPoint.proceed()方法，则修改的参数值不会生效，必须调用joinPoint.proceed(Object[] args)
-            JsonResponse proceed = (JsonResponse) joinPoint.proceed();
-            Integer code = proceed.getCode();
-            if (code == 1) {
-                System.out.println("存储成功信息");
-            } else {
-                System.out.println("存储失败信息");
-            }
+            proceed = joinPoint.proceed();
+
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -50,7 +46,7 @@ public class OperationLogAspect {
         System.out.println(annotation.value());
 
 
-        return JsonResponse.Builder.buildSuccess("addOperationLog success");
+        return proceed;
     }
 
     @AfterThrowing(value = "addOperationLog()", throwing = "throwable")

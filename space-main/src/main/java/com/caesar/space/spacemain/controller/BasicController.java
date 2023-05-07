@@ -17,13 +17,14 @@
 package com.caesar.space.spacemain.controller;
 
 
+import com.caesar.space.spaceapi.domain.User;
 import com.caesar.space.spaceapi.responce.JsonResponse;
-import com.caesar.space.spaceapi.util.MqUtil;
+import com.caesar.space.spaceapi.util.LogUtil;
 import com.caesar.space.spacemain.service.BasicUserService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.ribbon.proxy.annotation.Hystrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,11 +41,11 @@ public class BasicController {
 
     @RequestMapping(value = "upload")
     @HystrixCommand(fallbackMethod = "uploadFail")
-    public JsonResponse<?> upload(@RequestPart("file") MultipartFile multipartFile) {
+    public Object upload(@RequestPart("file") MultipartFile multipartFile) {
         if (multipartFile == null) {
             return JsonResponse.Builder.buildFailure("file is required");
         }
-        return JsonResponse.Builder.buildSuccess(basicUserService.uploadFileBySpaceFile(multipartFile));
+        return basicUserService.uploadFileBySpaceFile(multipartFile);
     }
 
     /**
@@ -55,8 +56,15 @@ public class BasicController {
      * @return JsonResponse
      */
     public JsonResponse<?> uploadFail(MultipartFile multipartFile) {
+        // 触发熔断打印日志
+        LogUtil.logInfo("调用space-file服务失败/异常，请检查space-file服务日志",this.getClass());
         return JsonResponse.Builder.buildFailure("上传失败咯");
     }
 
+    @RequestMapping("userInfo")
+    public JsonResponse<?> getUserInfo(@RequestParam("userId") Long userId) {
+        User user = basicUserService.gerSingleUserInfo(userId);
+        return JsonResponse.Builder.buildSuccess(user);
+    }
 
 }

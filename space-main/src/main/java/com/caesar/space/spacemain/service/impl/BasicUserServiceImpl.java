@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caesar.space.spaceapi.constant.ServiceConstant;
 import com.caesar.space.spaceapi.exception.ServiceException;
 import com.caesar.space.spaceapi.util.MqUtil;
-import com.caesar.space.spacemain.domain.User;
+import com.caesar.space.spaceapi.domain.User;
 import com.caesar.space.spacemain.mapper.BasicUserMapper;
 import com.caesar.space.spacemain.service.BasicUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +40,7 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
 
     @Override
     public User gerSingleUserInfo(Long userId) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId);
-        return basicUserMapper.selectOne(wrapper);
+        return basicUserMapper.selectUserById(userId);
     }
 
     @Override

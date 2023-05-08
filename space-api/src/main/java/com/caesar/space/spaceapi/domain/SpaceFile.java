@@ -23,12 +23,12 @@ public class SpaceFile implements Serializable {
      * 文件ID
      */
     @TableId
-    private Long fileId;
+    private String fileId;
 
     /**
      * 文件关联用户的ID
      */
-    private Long userId;
+    private String userId;
 
     /**
      * 文件路径

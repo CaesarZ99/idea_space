@@ -42,8 +42,7 @@ public class OperationLogAspect {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-        LogUtil.logInfo("test",this.getClass());
-        System.out.println(annotation.value());
+        LogUtil.logInfo(annotation.value(),this.getClass());
 
 
         return proceed;

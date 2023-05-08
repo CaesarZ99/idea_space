@@ -5,9 +5,7 @@
 <mapper namespace="com.caesar.space.spacemain.mapper.BasicUserMapper">
 
     <sql id="Base_Column_List">
-        iut
-        .
-        user_id
+        iut.user_id
         , iut.user_name, iut.password, iut.nick_name, iut.invalid_flag, iut.delete_flag, iut.created_time, iut.updated_time
     </sql>
     <resultMap id="BaseResultMap" type="com.caesar.space.spaceapi.domain.User">

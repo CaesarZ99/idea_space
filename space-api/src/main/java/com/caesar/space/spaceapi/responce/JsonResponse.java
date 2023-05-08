@@ -50,7 +50,7 @@ public class JsonResponse<T> {
             return new JsonResponse<>(SUCCESS_CODE, DEFAULT_SUCCESS_MESSAGE, data);
         }
 
-        public static JsonResponse<?> buildSuccess(String message) {
+        public static JsonResponse<String> buildSuccess(String message) {
             return new JsonResponse<>(SUCCESS_CODE, message);
         }
 
@@ -66,7 +66,7 @@ public class JsonResponse<T> {
             return new JsonResponse<>(FAILURE_CODE, DEFAULT_FAILURE_MESSAGE, data);
         }
 
-        public static JsonResponse<?> buildFailure(String message) {
+        public static JsonResponse<String> buildFailure(String message) {
             return new JsonResponse<>(FAILURE_CODE, message);
         }
 

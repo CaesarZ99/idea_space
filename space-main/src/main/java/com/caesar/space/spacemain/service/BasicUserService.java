@@ -3,6 +3,8 @@ package com.caesar.space.spacemain.service;
 import com.caesar.space.spaceapi.domain.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface BasicUserService {
 
     /**
@@ -17,10 +19,12 @@ public interface BasicUserService {
      * 通过调用space-file文件服务接口上传文件
      * 用户头像上传等
      *
-     * @param file file
+     * @param file    file
+     * @param userId
+     * @param request
      * @return String
      */
-    String uploadFileBySpaceFile(MultipartFile file);
+    Object uploadFileBySpaceFile(MultipartFile file, Long userId, HttpServletRequest request);
 
     /**
      * 通过调用rabbitmq 消息队列异步上传文件

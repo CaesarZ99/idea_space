@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
  */
@@ -41,11 +43,11 @@ public class BasicController {
 
     @RequestMapping(value = "upload")
     @HystrixCommand(fallbackMethod = "uploadFail")
-    public Object upload(@RequestPart("file") MultipartFile multipartFile) {
+    public Object upload(@RequestPart("file") MultipartFile multipartFile, @RequestParam("userId") Long userId, HttpServletRequest request) {
         if (multipartFile == null) {
             return JsonResponse.Builder.buildFailure("file is required");
         }
-        return basicUserService.uploadFileBySpaceFile(multipartFile);
+        return basicUserService.uploadFileBySpaceFile(multipartFile,userId,request);
     }
 
     /**
@@ -55,9 +57,9 @@ public class BasicController {
      * @param multipartFile multipartFile
      * @return JsonResponse
      */
-    public JsonResponse<?> uploadFail(MultipartFile multipartFile) {
+    public JsonResponse<?> uploadFail(MultipartFile multipartFile,Long userId, HttpServletRequest request) {
         // 触发熔断打印日志
-        LogUtil.logInfo("调用space-file服务失败/异常，请检查space-file服务日志",this.getClass());
+        LogUtil.logInfo("调用space-file服务失败/异常，请检查space-file服务日志: ",this.getClass());
         return JsonResponse.Builder.buildFailure("上传失败咯");
     }
 

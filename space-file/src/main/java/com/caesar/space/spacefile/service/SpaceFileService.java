@@ -13,5 +13,5 @@ import javax.servlet.http.HttpServletRequest;
 */
 public interface SpaceFileService extends IService<SpaceFile> {
 
-    String uploadFileLimit(MultipartFile multipartFile, int limit, HttpServletRequest request);
+    String uploadFileLimit(MultipartFile multipartFile, int limit, String ipAddr);
 }

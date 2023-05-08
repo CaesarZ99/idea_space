@@ -50,10 +50,9 @@ public class SapceFileServiceImpl extends ServiceImpl<SpaceFileMapper, SpaceFile
 
     @OperationLog(code = "uploadFile", value = "上传头像")
     @Override
-    public String uploadFileLimit(MultipartFile multipartFile, int limit, HttpServletRequest request) {
-        String ipaddr = IpUtil.getIpAddr(request);
-        int uploadTimesInDay = redisUtil.get(ipaddr);
-        if (!fileLimits(limit, ipaddr, uploadTimesInDay)) {
+    public String uploadFileLimit(MultipartFile multipartFile, int limit, String ipAddr) {
+        int uploadTimesInDay = redisUtil.get(ipAddr);
+        if (!fileLimits(limit, ipAddr, uploadTimesInDay)) {
             return "FAILED";
         }
         return uploadFile(multipartFile);
@@ -90,10 +89,10 @@ public class SapceFileServiceImpl extends ServiceImpl<SpaceFileMapper, SpaceFile
     }
 
     private void saveUploadInfo(String key, String downloadUrl) {
-        SpaceFile spaceFile = new SpaceFile(null, 1650037476670177280L, downloadUrl,
+        SpaceFile spaceFile = new SpaceFile(null, "1650037476670177280", downloadUrl,
                 key.substring(key.lastIndexOf(".") + 1), 1, "001", new Date(), new Date());
         UpdateWrapper<SpaceFile> wrapper = new UpdateWrapper<>();
-        wrapper.eq("user_id", 1650037476670177280L);
+        wrapper.eq("user_id", "1650037476670177280").eq("is_latest",1);
         SpaceFile entity = new SpaceFile();
         entity.setIsLatest(0);
         // 将之前的图片设置为非最新

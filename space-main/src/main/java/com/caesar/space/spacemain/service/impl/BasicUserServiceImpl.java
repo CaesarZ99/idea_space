@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caesar.space.spaceapi.constant.ServiceConstant;
 import com.caesar.space.spaceapi.exception.ServiceException;
+import com.caesar.space.spaceapi.responce.JsonResponse;
+import com.caesar.space.spaceapi.util.IpUtil;
 import com.caesar.space.spaceapi.util.MqUtil;
 import com.caesar.space.spaceapi.domain.User;
 import com.caesar.space.spacemain.mapper.BasicUserMapper;
@@ -18,6 +20,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <h3>BasicUserServiceImpl</h3>
@@ -44,11 +48,15 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
     }
 
     @Override
-    public String uploadFileBySpaceFile(MultipartFile file) {
+    public Object uploadFileBySpaceFile(MultipartFile file, Long userId, HttpServletRequest request) {
+        if (checkValidUserId(userId)) {
+            return JsonResponse.Builder.buildFailure();
+        }
         // 文件 MultiValueMap传参
         MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
         // 通过file.getResource()传输文件
         formData.add("file", file.getResource());
+        formData.add("ipAddr", IpUtil.getIpAddr(request));
         // 设置请求头
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "multipart/form-data");
@@ -63,6 +71,13 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
         }
         // 获取响应body
         return stringResponseEntity.getBody();
+    }
+
+    public boolean checkValidUserId(Long userId) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",userId);
+        User user = basicUserMapper.selectOne(wrapper);
+        return user == null;
     }
 
     @Override

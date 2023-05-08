@@ -103,3 +103,9 @@
   - docker部署后端无法连接华为云服务器nacos
   - 解决措施：docker中部署nacos需要放开9848和9849端口
 
+- 问题6
+  - 将服务分开部署在不同服务器时, nacos默认内网访问连接超时
+  - 解决措施：在配置文件中标识服务公网IP, 使用公网访问：
+    ```properties
+      spring.cloud.nacos.discovery.ip=服务所在服务器的IP
+    ```

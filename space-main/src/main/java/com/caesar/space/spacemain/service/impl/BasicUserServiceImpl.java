@@ -2,21 +2,25 @@ package com.caesar.space.spacemain.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.caesar.space.spaceapi.constant.RedisKeyConstant;
 import com.caesar.space.spaceapi.constant.ServiceConstant;
 import com.caesar.space.spaceapi.exception.ServiceException;
 import com.caesar.space.spaceapi.responce.JsonResponse;
 import com.caesar.space.spaceapi.util.IpUtil;
+import com.caesar.space.spaceapi.util.LogUtil;
 import com.caesar.space.spaceapi.util.MqUtil;
 import com.caesar.space.spaceapi.domain.User;
 import com.caesar.space.spacemain.mapper.BasicUserMapper;
 import com.caesar.space.spacemain.service.BasicUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,16 +46,23 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
     @Autowired
     private MqUtil mqUtil;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     @Override
     public User gerSingleUserInfo(Long userId) {
         return basicUserMapper.selectUserById(userId);
     }
 
     @Override
-    public Object uploadFileBySpaceFile(MultipartFile file, Long userId, HttpServletRequest request) {
-        if (checkValidUserId(userId)) {
-            return JsonResponse.Builder.buildFailure();
+    public Object uploadFileBySpaceFile(MultipartFile file, String captcha, HttpServletRequest request) throws InterruptedException {
+        String fileUploadCaptcha = redisTemplate.opsForValue().get(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_PREFIX + IpUtil.getIpAddr(request));
+        if (StringUtils.isEmpty(fileUploadCaptcha)
+            || !captcha.equals(fileUploadCaptcha)
+        ) {
+            return JsonResponse.Builder.buildFailure("验证码不正确哦");
         }
+        LogUtil.logInfo("验证码校验通过了",this.getClass());
         // 文件 MultiValueMap传参
         MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
         // 通过file.getResource()传输文件
@@ -68,7 +79,20 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
         } catch (RestClientException e) {
             // 文件服务异常, 使用自定义异常输出信息
             throw new ServiceException("上传文件 --- 调用" + ServiceConstant.IDEA_SPACE_FILE.getName() + "异常");
+        } finally {
+            Boolean delete = redisTemplate.delete(RedisKeyConstant.FILE_UPLOAD_PREFIX + captcha);
+            int count = 0;
+            while (Boolean.FALSE.equals(delete)) {
+                Thread.sleep(1000);
+                delete = redisTemplate.delete(RedisKeyConstant.FILE_UPLOAD_PREFIX + captcha);
+                count++;
+                // 失败重试,十次之后放弃重试
+                if (count >= 10) {
+                    break;
+                }
+            }
         }
+
         // 获取响应body
         return stringResponseEntity.getBody();
     }

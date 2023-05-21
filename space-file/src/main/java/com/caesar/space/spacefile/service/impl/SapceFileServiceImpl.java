@@ -3,9 +3,9 @@ package com.caesar.space.spacefile.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caesar.space.spaceapi.annotations.OperationLog;
+import com.caesar.space.spaceapi.constant.RedisKeyConstant;
 import com.caesar.space.spaceapi.exception.ServiceException;
-import com.caesar.space.spaceapi.util.IpUtil;
-import com.caesar.space.spaceapi.util.RedisUtil;
+import com.caesar.space.spaceapi.util.TimeUtil;
 import com.caesar.space.spacefile.config.COSConfig;
 import com.caesar.space.spaceapi.domain.SpaceFile;
 import com.caesar.space.spacefile.mapper.SpaceFileMapper;
@@ -16,14 +16,15 @@ import com.qcloud.cos.model.PutObjectRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 刘文康
@@ -36,7 +37,7 @@ public class SapceFileServiceImpl extends ServiceImpl<SpaceFileMapper, SpaceFile
         implements SpaceFileService {
 
     @Autowired
-    private RedisUtil redisUtil;
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private SpaceFileMapper spaceFileMapper;
@@ -51,7 +52,8 @@ public class SapceFileServiceImpl extends ServiceImpl<SpaceFileMapper, SpaceFile
     @OperationLog(code = "uploadFile", value = "上传头像")
     @Override
     public String uploadFileLimit(MultipartFile multipartFile, int limit, String ipAddr) {
-        int uploadTimesInDay = redisUtil.get(ipAddr);
+        String value = redisTemplate.opsForValue().get(ipAddr);
+        int uploadTimesInDay = StringUtils.isEmpty(value) ? 0 : Integer.parseInt(value);
         if (!fileLimits(limit, ipAddr, uploadTimesInDay)) {
             return "FAILED";
         }
@@ -134,9 +136,9 @@ public class SapceFileServiceImpl extends ServiceImpl<SpaceFileMapper, SpaceFile
             return false;
         }
         if (uploadTimesInDay == 0) {
-            redisUtil.set(ipaddr);
+            redisTemplate.opsForValue().set(RedisKeyConstant.FILE_UPLOAD_PREFIX + ipaddr, "1", TimeUtil.getRemainSecondsOneDay(new Date()), TimeUnit.SECONDS);
         } else {
-            redisUtil.increment(ipaddr);
+            redisTemplate.opsForValue().increment(ipaddr);
         }
         return true;
     }

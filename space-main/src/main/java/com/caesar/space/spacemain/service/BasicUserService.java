@@ -24,7 +24,7 @@ public interface BasicUserService {
      * @param request
      * @return String
      */
-    Object uploadFileBySpaceFile(MultipartFile file, Long userId, HttpServletRequest request);
+    Object uploadFileBySpaceFile(MultipartFile file, String userId, HttpServletRequest request) throws InterruptedException;
 
     /**
      * 通过调用rabbitmq 消息队列异步上传文件

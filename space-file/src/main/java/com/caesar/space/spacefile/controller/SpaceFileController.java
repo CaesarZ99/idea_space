@@ -44,7 +44,7 @@ public class SpaceFileController {
             return JsonResponse.Builder.buildFailure("multipartFile is required");
         }
         Object uploadFileLimit = ideaFileService.uploadFileLimit(multipartFile, 10, ipAddr);
-        Long expire = redisTemplate.opsForValue().getOperations().getExpire(RedisKeyConstant.FILE_UPLOAD_PREFIX + ipAddr);
+        Long expire = redisTemplate.opsForValue().getOperations().getExpire(RedisKeyConstant.FILE_UPLOAD_PREFIX.getCode() + ipAddr);
         if ("FAILED".equals(uploadFileLimit)) {
             return JsonResponse.Builder.buildFailure("您今日上传以超过次数限制: " + 10 + "次~ 请在 "
                     + TimeUtil.formatDateTime(expire == null ? 0 : expire) + " 后重试");

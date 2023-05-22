@@ -56,7 +56,7 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
 
     @Override
     public Object uploadFileBySpaceFile(MultipartFile file, String captcha, HttpServletRequest request) throws InterruptedException {
-        String fileUploadCaptcha = redisTemplate.opsForValue().get(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_PREFIX + IpUtil.getIpAddr(request));
+        String fileUploadCaptcha = redisTemplate.opsForValue().get(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_PREFIX.getCode() + IpUtil.getIpAddr(request));
         if (StringUtils.isEmpty(fileUploadCaptcha)
             || !captcha.equals(fileUploadCaptcha)
         ) {
@@ -80,11 +80,11 @@ public class BasicUserServiceImpl extends ServiceImpl<BasicUserMapper, User> imp
             // 文件服务异常, 使用自定义异常输出信息
             throw new ServiceException("上传文件 --- 调用" + ServiceConstant.IDEA_SPACE_FILE.getName() + "异常");
         } finally {
-            Boolean delete = redisTemplate.delete(RedisKeyConstant.FILE_UPLOAD_PREFIX + captcha);
+            Boolean delete = redisTemplate.delete(RedisKeyConstant.FILE_UPLOAD_PREFIX.getCode() + captcha);
             int count = 0;
             while (Boolean.FALSE.equals(delete)) {
                 Thread.sleep(1000);
-                delete = redisTemplate.delete(RedisKeyConstant.FILE_UPLOAD_PREFIX + captcha);
+                delete = redisTemplate.delete(RedisKeyConstant.FILE_UPLOAD_PREFIX.getCode() + captcha);
                 count++;
                 // 失败重试,十次之后放弃重试
                 if (count >= 10) {

@@ -136,7 +136,7 @@ public class SapceFileServiceImpl extends ServiceImpl<SpaceFileMapper, SpaceFile
             return false;
         }
         if (uploadTimesInDay == 0) {
-            redisTemplate.opsForValue().set(RedisKeyConstant.FILE_UPLOAD_PREFIX + ipaddr, "1", TimeUtil.getRemainSecondsOneDay(new Date()), TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(RedisKeyConstant.FILE_UPLOAD_PREFIX.getCode() + ipaddr, "1", TimeUtil.getRemainSecondsOneDay(new Date()), TimeUnit.SECONDS);
         } else {
             redisTemplate.opsForValue().increment(ipaddr);
         }

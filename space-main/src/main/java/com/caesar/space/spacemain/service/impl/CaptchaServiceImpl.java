@@ -31,9 +31,9 @@ public class CaptchaServiceImpl implements CaptchaService {
         BufferedImage bufferedImage = CaptchaGenerator.generateCaptchaImage();
         String string = CaptchaGenerator.captchaCode.toString().toLowerCase();
         // 缓存验证码五分钟
-        redisTemplate.opsForValue().set(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_PREFIX + IpUtil.getIpAddr(request), string, 300L, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_PREFIX.getCode() + IpUtil.getIpAddr(request), string, 300L, TimeUnit.SECONDS);
         // 某ip请求达到次数限制，五分钟后重试
-        String limit = RedisKeyConstant.FILE_UPLOAD_CAPTCHA_LIMIT_PREFIX + IpUtil.getIpAddr(request);
+        String limit = RedisKeyConstant.FILE_UPLOAD_CAPTCHA_LIMIT_PREFIX.getCode() + IpUtil.getIpAddr(request);
         redisTemplate.opsForValue().setIfAbsent(limit,"0", 300, TimeUnit.SECONDS);
         redisTemplate.opsForValue().increment(limit);
         return bufferedImage;
@@ -41,7 +41,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 
     @Override
     public boolean captchaLimit(HttpServletRequest request) {
-        String limit = redisTemplate.opsForValue().get(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_LIMIT_PREFIX + IpUtil.getIpAddr(request));
+        String limit = redisTemplate.opsForValue().get(RedisKeyConstant.FILE_UPLOAD_CAPTCHA_LIMIT_PREFIX.getCode() + IpUtil.getIpAddr(request));
         return StringUtils.isNotEmpty(limit) && Integer.parseInt(limit) >= 10;
     }
 }

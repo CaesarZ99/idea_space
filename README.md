@@ -109,3 +109,17 @@
     ```properties
       spring.cloud.nacos.discovery.ip=服务所在服务器的IP
     ```
+
+- 问题7
+  - nginx配置转发真实客户端ip到服务器时,会被腾讯云拦截,需要备案域名
+  - 解决措施: 不转发真是客户端IP, 使用代理服务器IP
+  ```text
+      location / {
+          #proxy_set_header Host $host;
+          #proxy_set_header X-Real-IP $remote_addr;
+          #proxy_set_header REMOTE-HOST $remote_addr;
+          #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_pass http://ip;
+          proxy_redirect default;
+       }
+  ```

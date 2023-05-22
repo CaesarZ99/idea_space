@@ -24,6 +24,7 @@ import com.caesar.space.spaceapi.util.LogUtil;
 import com.caesar.space.spacemain.service.BasicUserService;
 import com.caesar.space.spacemain.service.CaptchaService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +53,10 @@ public class BasicController {
     private BasicUserService basicUserService;
 
     @RequestMapping(value = "upload")
-    @HystrixCommand(fallbackMethod = "uploadFail")
+    @HystrixCommand(fallbackMethod = "uploadFail",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "20000" )
+            })
     public Object upload(@RequestPart("file") MultipartFile multipartFile, @RequestParam("captcha") String captcha, HttpServletRequest request) throws InterruptedException {
         if (multipartFile == null) {
             return JsonResponse.Builder.buildFailure("file is required");

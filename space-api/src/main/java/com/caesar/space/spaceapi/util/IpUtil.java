@@ -1,4 +1,4 @@
-package com.caesar.space.spaceapi.tools;
+package com.caesar.space.spaceapi.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;

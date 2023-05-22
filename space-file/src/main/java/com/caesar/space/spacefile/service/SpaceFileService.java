@@ -1,9 +1,10 @@
 package com.caesar.space.spacefile.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.caesar.space.spaceapi.responce.JsonResponse;
-import com.caesar.space.spacefile.domain.SpaceFile;
+import com.caesar.space.spaceapi.domain.SpaceFile;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author 刘文康
@@ -12,5 +13,5 @@ import org.springframework.web.multipart.MultipartFile;
 */
 public interface SpaceFileService extends IService<SpaceFile> {
 
-    JsonResponse<?> uploadFileLimit(MultipartFile multipartFile, int limit);
+    String uploadFileLimit(MultipartFile multipartFile, int limit, String ipAddr);
 }

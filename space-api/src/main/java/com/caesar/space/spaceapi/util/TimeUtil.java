@@ -1,4 +1,4 @@
-package com.caesar.space.spaceapi.tools;
+package com.caesar.space.spaceapi.util;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -18,7 +18,7 @@ public class TimeUtil {
      * @param currentDate currentDate
      * @return Integer
      */
-    public static Integer getRemainSecondsOneDay(Date currentDate) {
+    public static Long getRemainSecondsOneDay(Date currentDate) {
         Calendar midnight= Calendar.getInstance();
         midnight.setTime(currentDate);
         midnight.add(Calendar.DAY_OF_MONTH,1);
@@ -26,7 +26,7 @@ public class TimeUtil {
         midnight.set(Calendar.MINUTE,0);
         midnight.set(Calendar.SECOND,0);
         midnight.set(Calendar.MILLISECOND,0);
-        return (Integer) (int)((midnight.getTime().getTime()-currentDate.getTime())/1000);
+        return (midnight.getTime().getTime()-currentDate.getTime())/1000;
     }
 
     /**

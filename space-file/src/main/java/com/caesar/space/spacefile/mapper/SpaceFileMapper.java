@@ -1,7 +1,7 @@
 package com.caesar.space.spacefile.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.caesar.space.spacefile.domain.SpaceFile;
+import com.caesar.space.spaceapi.domain.SpaceFile;
 
 /**
 * @author 刘文康
@@ -9,8 +9,8 @@ import com.caesar.space.spacefile.domain.SpaceFile;
 * @createDate 2023-04-21 09:29:35
 * @Entity generator.domain.IdeaFile
 */
-public interface IdeaFileMapper extends BaseMapper<SpaceFile> {
-
+public interface SpaceFileMapper extends BaseMapper<SpaceFile> {
+    SpaceFile selectOneByUserId(long id);
 }
 
 

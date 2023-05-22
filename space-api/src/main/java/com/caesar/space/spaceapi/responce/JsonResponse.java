@@ -1,7 +1,9 @@
 package com.caesar.space.spaceapi.responce;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * <h3>JsonResponce</h3>
@@ -11,7 +13,9 @@ import lombok.NoArgsConstructor;
  * @date : 2023-04-23 16:37
  **/
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class JsonResponse<T> {
 
     public static final Integer SUCCESS_CODE = 1;
@@ -22,11 +26,19 @@ public class JsonResponse<T> {
     public static final String DEFAULT_NO_DATA_MESSAGE = "no data";
 
     private Integer code;
+
+    private String message;
+
     private T data;
 
     public JsonResponse(Integer code, T data) {
         this.code = code;
         this.data = data;
+    }
+
+    public JsonResponse(Integer code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
     public static class Builder {
@@ -35,7 +47,15 @@ public class JsonResponse<T> {
         }
 
         public static JsonResponse<?> buildSuccess(Object data) {
-            return new JsonResponse<>(SUCCESS_CODE, data);
+            return new JsonResponse<>(SUCCESS_CODE, DEFAULT_SUCCESS_MESSAGE, data);
+        }
+
+        public static JsonResponse<String> buildSuccess(String message) {
+            return new JsonResponse<>(SUCCESS_CODE, message);
+        }
+
+        public static JsonResponse<?> buildSuccess(String message, Object data) {
+            return new JsonResponse<>(SUCCESS_CODE, message, data);
         }
 
         public static JsonResponse<?> buildFailure() {
@@ -43,7 +63,15 @@ public class JsonResponse<T> {
         }
 
         public static JsonResponse<?> buildFailure(Object data) {
-            return new JsonResponse<>(FAILURE_CODE, data);
+            return new JsonResponse<>(FAILURE_CODE, DEFAULT_FAILURE_MESSAGE, data);
+        }
+
+        public static JsonResponse<String> buildFailure(String message) {
+            return new JsonResponse<>(FAILURE_CODE, message);
+        }
+
+        public static JsonResponse<?> buildFailure(String message, Object data) {
+            return new JsonResponse<>(FAILURE_CODE, message, data);
         }
 
         public static JsonResponse<?> buildNoData(Object data) {
@@ -52,10 +80,6 @@ public class JsonResponse<T> {
 
         public static JsonResponse<?> buildNoData() {
             return new JsonResponse<>(NO_DATA_CODE, DEFAULT_NO_DATA_MESSAGE);
-        }
-
-        public static JsonResponse<?> build(Integer code, Object data) {
-            return new JsonResponse<>(code, data);
         }
     }
 

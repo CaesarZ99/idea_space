@@ -9,3 +9,5 @@ spring:
         file-extension: yml
         refresh-enabled: true
         server-addr: 139.9.240.113:8848
+      discovery:
+        ip: 139.9.240.113

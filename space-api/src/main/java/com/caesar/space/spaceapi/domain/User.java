@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.caesar.space.spacemain.domain;
+package com.caesar.space.spaceapi.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -31,10 +33,11 @@ import java.util.Date;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @TableName("idea_user_t")
 public class User {
     @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Long userId;
+    private String userId;
 
     private String userName;
 
@@ -49,5 +52,8 @@ public class User {
     private String createdTime;
 
     private String updatedTime;
+
+    @TableField(exist = false)
+    private SpaceFile avatarFile;
 
 }

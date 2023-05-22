@@ -1,5 +1,7 @@
 server:
   port: 8080
+  servlet:
+    context-path: /space-main
 spring:
   application:
     name: space-main # 服务名称
@@ -9,3 +11,5 @@ spring:
         file-extension: yml
         refresh-enabled: true
         server-addr: 139.9.240.113:8848
+      discovery:
+        ip: 101.43.173.82
